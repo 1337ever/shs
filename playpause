@@ -1,6 +1,6 @@
 #!/usr/bin/sh
 #wrapper to playercom that provides detailed status notifications with notify-send.
-#caches album art under /tmp/playericon.*
+#caches album art under ~/.cache/playericons
 
 iconsize="128x128"
 alias playercom="playerctl -p spotify"
