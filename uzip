@@ -1,0 +1,69 @@
+#!/usr/bin/python3
+
+import sys
+from zipfile import ZipFile
+
+# get cmd args
+args = sys.argv[1:]
+fargs = sys.argv[1:]
+
+# whether to extract all archives to the same destination
+combine = False
+verbose = False
+outDir = None
+
+def vprint(e):
+    if verbose:
+        print(e)
+
+# if no arguments are supplied
+if len(args) == 0:
+    print('Usage: uzip [zip archive(s)] [options]')
+    print('If no options are supplied, archives will be unzipped to a directory of the same name.\n')
+    print('Options:')
+    print('-o | used to specify one output destination')
+    print('-c | extract all archives into the same folder, instead of the default behavior of creating containing directories for each archive')
+    print('-v | verbose mode; output a bunch of extra details')
+    print()
+    sys.exit()
+
+if '-v' in args:
+    verbose = True
+    vprint('-v set')
+    args.remove('-v')
+
+if '-c' in args:
+    combine = True
+    vprint('-c set')
+    args.remove('-c')
+
+# check if dest dir was supplied
+try:
+    ind = args.index('-o')
+    try:
+        outDir = args[ind+1]
+    except IndexError:
+        sys.exit("Error: failed to supply a destination after using the -o argument.")
+    args.remove('-o')
+    args.remove(outDir)
+except ValueError: #if the argument isn't present
+    pass
+
+vprint(f'raw arguments: {fargs}')
+vprint(f'archives: {args}')
+
+for arc in args:
+    # by default just extract each archive into its own dir
+    # if custom dir is not specified but combine is, extract all arcs into a dir with the name of the first arc
+    if outDir == None and combine:
+        arcout = args[0].split('.zip')[0]
+    elif outDir == None:
+        arcout = arc.split('.zip')[0]
+    if outDir and combine:
+        arcout = outDir
+    elif outDir:
+        splitarc = arc.split('.zip')[0]
+        arcout = f'{outDir}/{splitarc}'
+
+    with ZipFile(arc, 'r') as zip:
+        zip.extractall(arcout)

@@ -1,0 +1,46 @@
+#!/usr/bin/sh
+# This might look like it, but it is NOT compatible with the Freedesktop.org trash spec.
+
+trashd=/home/murwa/Trash
+infod=$trashd/info
+filed=$trashd/files
+
+test $# -eq 0 && {
+    echo "Usage: trash [option] ['file(s)']"
+    echo "Options:"
+    echo "-put\tput a file or directory into the trash" 
+    echo "-get\trestore a file or directory from the trash"
+    echo "-empty\tempty the trash"
+    exit 2
+}
+
+put() {
+    for file in $*
+    do
+        base=$(basename $file)
+        infof=$infod/$file.trashinfo
+        # write info file
+        echo $(pwd)/$file > $infof
+        echo $(date +%s) >> $infof
+    done
+}
+
+get() {
+    echo test
+}
+
+empty() {
+    echo test
+}
+
+case $1 in
+    -put )
+        put $2
+    ;;
+    -get )
+        get $2
+    ;;
+    -empty )
+        empty $2
+    ;;
+esac

@@ -1,0 +1,72 @@
+#!/usr/bin/sh
+# This script should be POSIX-compliant
+# Loosely based on i3-scrot from Manjaro
+
+_conf=$HOME/.config/egrab.conf
+
+# My config looks like this:
+#month=$(date +%m)
+#year=$(date +%Y)
+#screen_dir=$HOME/Pictures/screens/$year/$month
+#clip="xclip -selection clipboard -t image/png"
+#filename=$screen_dir/screenshot-$(date +%j_%s).png
+
+
+# make sure config file exists
+test -e $_conf || {
+	echo "Could not access config file at $_conf"
+	exit 1
+}
+
+# source config, pretty sure this is not best practice but ¯\_(ツ)_/¯
+. $_conf
+
+# make screen_dir if it doesn't exist
+mkdir -p $screen_dir
+
+test $# -gt 0 || {
+	echo "Configuration stored at $_conf"
+	echo "Options:"
+	echo "-f | --full\tgrab entire screen"
+	echo "-w | --window\tgrab active window"
+	echo "-s | --selection\tgrab selection"
+	echo "-sf | --selectionfreeze\tfreeze the screen and grab selection"
+	exit 2
+}
+
+# Function to copy file and handle errors with that
+copy_file() {
+	$clip $filename || {
+		notify-send "failed to copy screenshot $filename to clipboard"
+		exit 1
+	}
+}
+
+# Notify user that file has been saved, and copy to clipboard
+notify_copy() {
+	copy_file
+	notify-send -i $filename "screenshot saved to $filename"
+}
+
+case $1 in
+	--full | -f )
+		maim -i root $filename && notify_copy
+	;;
+	--window | -w )
+		maim -i $(xdotool getactivewindow) $filename && notify_copy
+	;;
+	--selection | -s )
+		maim -s $filename && notify_copy
+	;;
+	--selectionfreeze | -sf )
+		maim -i root /tmp/frozen.png && {
+			sxiv -fb /tmp/frozen.png &
+#			I use sxiv for this because the selection box shows up but you can use feh too
+#			feh -x -F /tmp/frozen.png &
+			id=$!
+			maim -s $filename && notify_copy
+			kill $id
+			rm /tmp/frozen.png
+		}
+	;;
+esac

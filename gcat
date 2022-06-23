@@ -1,0 +1,8 @@
+#!/usr/bin/sh
+
+test $# -gt 0 || {
+	echo "Print out a file in path"
+	exit 2
+}
+
+bat $(which $@)

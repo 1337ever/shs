@@ -1,0 +1,29 @@
+#!/usr/bin/sh
+
+exp=400
+
+case $1 in
+	-inc )
+		case $2 in
+			-k )
+				brightnessctl --device='tpacpi::kbd_backlight' set "1+"
+			;;
+			-s )
+				xbacklight -inc $3
+                notify-send -h int:value:$(xbacklight) -t $exp "Backlight"
+			;;
+		esac
+	;;
+	-dec )
+		case $2 in
+			-k )
+				brightnessctl --device='tpacpi::kbd_backlight' set "1-"
+			;;
+			-s )
+				xbacklight -dec $3
+                notify-send -h int:value:$(xbacklight) -t $exp "Backlight"
+			;;
+		esac
+	;;
+esac
+

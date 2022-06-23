@@ -1,0 +1,18 @@
+#!/usr/bin/sh
+_image="$HOME/Pictures/Bsodwindows10.png"
+
+case $1 in 
+	--blur | -b )
+		import -window root /tmp/screenshot.png
+		convert /tmp/screenshot.png -blur 0x9 /tmp/screenshotblur.png
+		rm /tmp/screenshot.png
+		i3lock -i /tmp/screenshotblur.png
+		rm /tmp/screenshotblur.png
+	;;
+	--image | -i )
+		i3lock -i $_image
+	;;
+esac
+
+# prevent race conditions on suspend, or so I am told
+sleep 1

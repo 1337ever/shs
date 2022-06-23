@@ -1,0 +1,23 @@
+#!/usr/bin/sh
+# Simple script to ask for a user to consent to something
+check() {
+    echo -n "$* (Y/n): "
+    read yn
+    case $yn in
+        [Yy]* )
+            return 0
+            ;;
+        "" )
+            return 0
+            ;;
+        [Nn]* )
+            return 1
+            ;;
+        * )
+            echo Unrecognized response.
+            check $*
+            ;;
+    esac
+}
+
+check $*

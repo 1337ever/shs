@@ -1,0 +1,4 @@
+#!/usr/bin/sh
+cmd="$@"
+script=$1
+gcat $script && confirm "Would you like to run the script?" && $cmd

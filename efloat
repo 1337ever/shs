@@ -1,0 +1,3 @@
+#!/usr/bin/sh
+# Open a floating emacs window
+emacsclient -nc -F "((name . \"floatemacs\") (height . 50) (width . 80))" $@

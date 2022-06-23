@@ -1,0 +1,30 @@
+#!/usr/bin/sh
+#wrapper to playercom that provides detailed status notifications with notify-send.
+#caches album art under /tmp/playericon.*
+
+iconsize="128x128"
+alias playercom="playerctl -p spotify"
+
+notify_status() {
+#   metadata values are based on what spotify seems to output
+    album=$(playercom metadata xesam:album)
+    artist=$(playercom metadata xesam:artist)
+    title=$(playercom metadata xesam:title)
+    icon=$(playercom metadata mpris:artUrl)
+    status=$(playercom status) 
+    iconpath=~/.cache/playericons/icon.$(basename $icon)
+    position=$(playercom position --format "{{duration(position)}}")
+    duration=$(playercom metadata --format "{{duration(mpris:length)}}")
+    pos_sec=$(playercom position)
+    dur_sec=$(echo "$(playercom metadata mpris:length)/1000000" | bc -l)
+    percent=$(echo "$pos_sec/$dur_sec*100" | bc -l)
+
+#   Check if icon has already been cached, download it if not.
+#   if spotify outputs some image format that notify-send doesn't support, it will just fail silently and no image will be included.
+#   Also resize cache image to save space in /tmp.
+    test -e $iconpath || curl $icon > $iconpath && mogrify -resize $iconsize $iconpath
+    
+    notify-send -h int:value:$percent -i $iconpath "$artist - $album" "$title\n$position/$duration\n$status" -t 2000
+}
+
+playercom -p spotify play-pause && notify_status

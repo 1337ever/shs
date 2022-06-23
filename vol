@@ -1,0 +1,31 @@
+#!/usr/bin/sh
+
+exp=400
+
+get_vol() {
+    pactl get-sink-volume 0 | grep -Eo [[:digit:]]+% | head -n 1 | sed 's/.$//'
+}
+
+case $1 in
+	-inc )
+		case $2 in
+			-s )
+                pactl set-sink-mute 0 false ; pactl set-sink-volume 0 "+$3%"
+                notify-send -t $exp -h int:value:$(get_vol) "Volume"
+			;;
+		esac
+	;;
+	-dec )
+		case $2 in
+			-s )
+                pactl set-sink-mute 0 false ; pactl set-sink-volume 0 "-$3%"
+                notify-send -t $exp -h int:value:$(get_vol) "Volume"
+			;;
+		esac
+	;;
+    -mute )
+        pactl set-sink-mute 0 toggle
+        notify-send -t $exp "Volume mute toggled"
+    ;;
+esac
+

@@ -1,0 +1,33 @@
+#!/usr/bin/sh
+_conf=$HOME/.config/egrab.conf
+# source conf
+. $_conf
+picdir=$screen_dir
+destdir=~/orgs
+
+# if a picdir is specified
+test $# -gt 0 && {
+    picdir=$1
+}
+
+# if a destdir is specified
+test $# -gt 1 && {
+    destdir=$2
+}
+
+cpname() {
+    for file in $*
+    do
+        # get new filename
+        echo "Enter a new name for file: $file"
+        read nname
+
+        # copy file
+        cp -i $file $destdir/$nname && {
+            echo "Copied $file to $destdir/$nname"
+        }
+    done
+}
+
+# use sxiv to select files
+cpname $(sxiv -t -N sxivf -o $picdir)

@@ -1,0 +1,85 @@
+#!/usr/bin/sh
+# Script to push scripts to the bin dir and make them executable
+src=/home/murwa/shs
+dest=/usr/local/bin/shs
+arg=$1
+
+test "$arg" = "-h" && {
+    echo "Push files from $src to $dest, and make them executable"
+    echo "Options:"
+    echo "-i | --interactive\twill prompt the user for every copy"
+    exit 2
+}
+
+
+# execute `cp` interactively if that arg was passed
+cpi() {
+    ( (test "$arg" = "-i") || (test "$arg" = "--interactive") ) && {
+        cp -i $1 $2
+        break
+    }
+    cp $1 $2
+}
+
+# identical to the confirm script, it's just reimplemented here so this script isn't dependent on others
+gen_check() {
+    echo -n "$* (Y/n): "
+    read yn
+    case $yn in
+        [Yy]* )
+            return 0
+            ;;
+        "" )
+            return 0
+            ;;
+        [Nn]* )
+            return 1
+            ;;
+        * )
+            echo Unrecognized response.
+            check $*
+            ;;
+    esac
+}
+
+# do some final sanity checks before copying files
+cpsh() {
+    for file in $*
+    do
+        base=$(basename $file)
+        srct=$(stat --printf '%Y' $file)
+        destf=$dest/$base
+        # check if destination exists. if not, copy it
+        test -e $destf || {
+            cpi $file $destf
+            # go to the next loop
+            continue
+        }
+        # see if the source and destination are different
+        (cmp $file $destf)>/dev/null || {
+            destt=$(stat --printf '%Y' $destf)
+            # check if destination is newer than source
+            test $destt -gt $srct && {
+                gen_check "Dest ($destf) is newer than src ($file). Are you sure you want to overwrite it?" || {
+                    echo skipping $file...
+                    continue
+                }
+            }
+            cpi $file $destf
+        }
+    done
+}
+
+cpsh $src/* && {
+    for file in $dest/*
+    do
+        # check if file is executable
+        test -x $file || {
+            gen_check "Would you like to make $file executable" && {
+                chmod +x $file
+            }
+        }
+    done
+    echo Job completed.
+    exit 0
+}
