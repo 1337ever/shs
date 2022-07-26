@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+#script for simplifying transferring files over ethernet to my windows machine on WSL that doesnt like to 
+# run as a server itself for some reason
+cat /tmp/f | /bin/cat $1 | nc -l 10.0.0.1 2067 > /tmp/f

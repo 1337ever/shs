@@ -49,6 +49,10 @@ cpsh() {
         base=$(basename $file)
         srct=$(stat --printf '%Y' $file)
         destf=$dest/$base
+        # check if file is license
+        test "LICENSE" = $base && {
+            continue
+        }
         # check if destination exists. if not, copy it
         test -e $destf || {
             cpi $file $destf

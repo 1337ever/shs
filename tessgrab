@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+#use tesseract to copy any text on screen to clipboard
+#i have it set to recognize a bunch of different languages but if you run this on your own machine make
+# sure to change the tesseract command to whatever languages u have installed
+TEXT=$(maim -s | tesseract -l eng+spa+jpn+chi_sim+rus - -)
+test -z "$TEXT" && {
+    notify-send "tessgrab: Failed to recognize any text"
+    exit 1
+} || echo $TEXT | xsel -ib && notify-send "tessgrab: Copied '$TEXT' to clipboard"
