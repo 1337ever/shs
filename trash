@@ -8,9 +8,9 @@ filed=$trashd/files
 test $# -eq 0 && {
     echo "Usage: trash [option] ['file(s)']"
     echo "Options:"
-    echo "-put\tput a file or directory into the trash" 
-    echo "-get\trestore a file or directory from the trash"
-    echo "-empty\tempty the trash"
+    printf %b "-put\tput a file or directory into the trash\n" 
+    printf %b "-get\trestore a file or directory from the trash\n"
+    printf %b "-empty\tempty the trash\n"
     exit 2
 }
 

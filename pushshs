@@ -7,7 +7,7 @@ arg=$1
 test "$arg" = "-h" && {
     echo "Push files from $src to $dest, and make them executable"
     echo "Options:"
-    echo "-i | --interactive\twill prompt the user for every copy"
+    printf %b "-i | --interactive\twill prompt the user for every copy\n"
     exit 2
 }
 

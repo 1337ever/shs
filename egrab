@@ -27,10 +27,10 @@ mkdir -p $screen_dir
 test $# -gt 0 || {
 	echo "Configuration stored at $_conf"
 	echo "Options:"
-	echo "-f | --full\tgrab entire screen"
-	echo "-w | --window\tgrab active window"
-	echo "-s | --selection\tgrab selection"
-	echo "-sf | --selectionfreeze\tfreeze the screen and grab selection"
+	printf %b "-f | --full\tgrab entire screen\n"
+	printf %b "-w | --window\tgrab active window\n"
+	printf %b "-s | --selection\tgrab selection\n"
+	printf %b "-sf | --selectionfreeze\tfreeze the screen and grab selection\n"
 	exit 2
 }
 
