@@ -1,7 +1,7 @@
 #!/usr/bin/sh
 #use tesseract to copy any text on screen to clipboard
-#i have it set to recognize a bunch of different languages but if you run this on your own machine make
-# sure to change the tesseract command to whatever languages u have installed
+#can take languages from the command line in format 'lang1+lang2+lang3'
+#if no languages are supplied, defaults to english
 LANGS=$1
 test -z "$LANGS" && LANGS="eng"
 TEXT=$(maim -s | tesseract -l $LANGS - -)
