@@ -1,0 +1,6 @@
+#/usr/bin/sh
+
+MODEL=$(cat /proc/cpuinfo | grep -m 1 "model name")
+CORES=$(cat /proc/cpuinfo | grep -c "model name")
+
+echo "$MODEL x$CORES"
